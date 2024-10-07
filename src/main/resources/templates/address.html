@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <title>天天生鲜－用户中心</title>
+    <link rel="stylesheet" type="text/css" href="css/reset.css">
+    <link rel="stylesheet" type="text/css" href="css/main.css">
+    <script type="text/javascript" src="js/jquery-1.12.4.min.js"></script>
+    <script type="text/javascript" src="layer/layer.js"></script>
+</head>
+<body>
+<input type="hidden" th:value="${session.username}" id="username"/>
+<script type="text/javascript">
+    $(function () {
+        var username = $('#username').val();
+        if (username == '' || username == null) {
+            window.location.href = "toIndex";
+        } else {
+            $("#login_info").css('display', 'block');
+        }
+    });
+</script>
+<!--头部 开始-->
+<div class="header_con">
+    <div class="header">
+        <div class="welcome fl">欢迎来到天天生鲜!</div>
+        <div class="login_btn fl"></div>
+        <div class="fr">
+            <div class="login_info fl" id="login_info">
+                欢迎您：<em>"<span th:text="${session.username}"></span>"</em>
+                <a th:href="@{userQuit}" class="zhuxiao">注销</a>
+            </div>
+<!--            <div class="login_btn fl" id="login_btn">-->
+<!--                <a href="toUserLogin.do">登录</a>-->
+<!--                <span>|</span>-->
+<!--                <a href="toUserRegister.do">注册</a>-->
+<!--            </div>-->
+            <div class="user_link fl">
+                <span>|</span>
+                <a th:href="@{toCustomer}">用户中心</a>
+                <span>|</span>
+                <a th:href="@{toShop}">我的购物车</a>
+                <span>|</span>
+                <a th:href="@{toOrder}">我的订单</a>
+            </div>
+        </div>
+    </div>
+</div>
+<!--头部 结束-->
+
+<!--左边目录 开始-->
+<div class="search_bar clearfix">
+    <a th:href="@{toIndex}" class="logo fl"><img src="images/logo.png"></a>
+    <div class="sub_page_name fl">|&nbsp;&nbsp;&nbsp;&nbsp;用户中心</div>
+    <div class="search_con fr">
+        <form method="post" th:action="@{goodsSearch}">
+            <input type="text" class="input_text fl" name="search" placeholder="搜索商品">
+            <input type="submit" class="input_btn fr" value="搜索">
+        </form>
+    </div>
+</div>
+<div class="main_con clearfix">
+    <div class="left_menu_con clearfix">
+        <h3>用户中心</h3>
+        <ul>
+            <li><a th:href="@{toCustomer}">· 个人信息</a></li>
+            <li><a th:href="@{toOrder}">· 全部订单</a></li>
+            <li><a href="#" class="active">· 收货地址</a></li>
+
+        </ul>
+    </div>
+    <!--左边目录 结束-->
+
+    <!--右边内容 开始-->
+    <div class="right_content clearfix">
+        <h3 class="common_title2">收货地址</h3>
+        <div class="site_con">
+            <dl>
+                <dt>当前地址： <span th:text="${session.address}"></span></dt>
+                <dd></dd>
+            </dl>
+        </div>
+        <h3 class="common_title2">编辑地址</h3>
+        <input type="hidden" id="ids" th:value="${ids}"/>
+        <div class="site_con">
+            <form action="" method="post">
+                <div class="form_group">
+                    <label>收件人：</label>
+                    <input type="text" id="uname" name="uname" readonly="readonly" th:value="${session.username}">
+                </div>
+                <div class="form_group form_group2">
+                    <label>详细地址：</label>
+                    <textarea class="site_area" id="uaddr" name="uaddr"></textarea>
+                </div>
+                <div class="form_group">
+                    <label>邮箱：</label>
+                    <input type="text" id="uyoub" name="uyoub" readonly="readonly" th:value="${session.email}">
+                </div>
+                <!--<div class="form_group">-->
+                <!--<label>手机：</label>-->
+                <!--<input type="text" name="utel" value="">-->
+                <!--</div>-->
+                <input type="button" id="address_submit" value="提交" class="info_submit">
+            </form>
+        </div>
+    </div>
+</div>
+<!--右边内容 结束-->
+<script type="text/javascript">
+    // var flag1;
+    var flag2;
+    // var flag3;
+    // var username;
+    var address;
+    // var email;
+    // $('#uname').blur(function () {
+    //     username = $('#uname').val();
+    //     var reg_username = /^\w{6,10}$/;
+    //     flag1 = reg_username.test(username);
+    //     if (flag1) {
+    //         layer.tips('用户名合法', '#uname');
+    //         $("#uname").css("border", "");
+    //     } else {
+    //         layer.tips('用户名需满足6到10位', '#uname');
+    //         $("#uname").css("border", "1px solid red");
+    //     }
+    // });
+    // $('#uyoub').blur(function () {
+    //     email = $('#uyoub').val();
+    //     var reg_email = /^[0-9a-zA-Z_.-]+[@][0-9a-zA-Z_.-]+[.][a-zA-Z]{2,3}$/;
+    //     flag3 = reg_email.test(email);
+    //     if (flag3) {
+    //         layer.tips('邮箱格式正确', '#uyoub');
+    //         $("#uyoub").css("border", "");
+    //     } else {
+    //         layer.tips('邮箱格式不正确', '#uyoub');
+    //         $("#uyoub").css("border", "1px solid red");
+    //     }
+    // });
+    $('#uaddr').blur(function () {
+        address = $('#uaddr').val();
+        var reg_address = /^([\u4e00-\u9fa5]{2,})$/;
+        flag2 = reg_address.test(address);
+        if (flag2) {
+            layer.tips('地址符合规范', '#uaddr');
+            $("#uaddr").css("border", "");
+        } else {
+            layer.tips('地址必须输入中文并且至少两个字', '#uaddr');
+            $("#uaddr").css("border", "1px solid red");
+        }
+    });
+    $('#address_submit').click(function () {
+        var ids = $('#ids').val();
+        if (ids==''){
+            layer.msg('无法发送地址，请先去购买商品');
+        }else {
+            if (flag2) {
+                $.post(
+                    "addressOver",
+                    {"address": address, "ids": ids},
+                    function (data) {
+                        if (data.status == 0) {
+                            window.location.href = "toOrder";
+                        } else if (data.status == 1) {
+                            layer.msg(data.message);
+                        } else {
+                            layer.msg('网络异常');
+                        }
+                    }
+                );
+            }else {
+                layer.msg('请将信息填写完整');
+            }
+        }
+    });
+</script>
+<!--底部 开始-->
+<div class="footer login_footer">
+</div>
+<!--底部 结束-->
+</body>
+</html>

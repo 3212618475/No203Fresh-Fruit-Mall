@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <title>天天生鲜－我的订单</title>
+    <link rel="stylesheet" type="text/css" href="css/reset.css">
+    <link rel="stylesheet" type="text/css" href="css/main.css">
+    <script type="text/javascript" src="js/jquery-1.12.4.min.js"></script>
+    <script type="text/javascript" src="layer/layer.js"></script>
+</head>
+<body>
+<input type="hidden" th:value="${session.username}" id="username"/>
+<script type="text/javascript">
+    $(function () {
+        var username = $('#username').val();
+        if (username == '' || username == null) {
+            window.location.href = "toIndex";
+        } else {
+            $("#login_info").css('display', 'block');
+        }
+    });
+</script>
+<!--头部  开始-->
+<div class="header_con">
+    <div class="header">
+        <div class="welcome fl">欢迎来到天天生鲜!</div>
+        <div class="login_btn fl"></div>
+        <div class="fr">
+            <div class="login_info fl" id="login_info">
+                欢迎您：<em>"<span th:text="${session.username}"></span>"</em>
+                <a th:href="@{userQuit}" class="zhuxiao">注销</a>
+            </div>
+<!--            <div class="login_btn fl" id="login_btn">-->
+<!--                <a href="toUserLogin.do">登录</a>-->
+<!--                <span>|</span>-->
+<!--                <a href="toUserRegister.do">注册</a>-->
+<!--            </div>-->
+
+            <div class="user_link fl">
+                <span>|</span>
+                <a th:href="@{toCustomer}">用户中心</a>
+                <span>|</span>
+                <a th:href="@{toShop}">我的购物车</a>
+                <span>|</span>
+                <a href="#">我的订单</a>
+            </div>
+        </div>
+    </div>
+</div>
+<!--头部  结束-->
+
+<!--内容  开始-->
+<div class="search_bar clearfix">
+    <a th:href="@{toIndex}" class="logo fl"><img src="images/logo.png"></a>
+    <div class="sub_page_name fl">|&nbsp;&nbsp;&nbsp;&nbsp;用户中心</div>
+    <div class="search_con fr">
+        <form method="post" th:action="@{goodsSearch}">
+            <input type="text" class="input_text fl" name="search" placeholder="搜索商品">
+            <input type="submit" class="input_btn fr" value="搜索">
+        </form>
+    </div>
+</div>
+<div class="main_con clearfix">
+    <div class="left_menu_con clearfix">
+        <h3>用户中心</h3>
+        <ul>
+            <li><a th:href="@{toCustomer}">· 个人信息</a></li>
+            <li><a href="#" class="active">· 全部订单</a></li>
+            <li><a th:href="@{toAddress}">· 收货地址</a></li>
+        </ul>
+    </div>
+
+    <div class="right_content clearfix">
+        <h3 class="common_title2">全部订单</h3>
+        <div class="site_con">
+            <h3 class="common_title2">未确认订单</h3>
+            <ul class="goods_type_list clearfix" id="goodsImg">
+<!--                <dl th:each="order:${session.orders}">-->
+<!--                    <input type="hidden" th:value="${order.id}"/>-->
+<!--                    <dt>商品名：<span th:text="${order.goods.name}"></span></dt>-->
+<!--                    <dt>商品单价：<span th:text="${order.goods.price}"></span></dt>-->
+<!--                    <dt>商品数量：<span th:text="${order.goodscar.reserved1}"></span></dt>-->
+<!--                    <dt><input type="button" onclick="cancel(this)" value="取消" class="info_submit"></dt>-->
+<!--                </dl>-->
+                <li th:each="order:${session.orders}">
+                    <input type="hidden" th:value="${order.id}"/>
+                    <div>订单号：<span th:text="${#strings.substringAfter(order.id,'-')}"></span></div>
+                    <div>商品名：<span th:text="${order.goods.name}"></span></div>
+                    <div>商品品牌：<span th:text="${order.goods.brand}"></span></div>
+                    <div>商品单价：<span th:text="${order.goods.price}"></span></div>
+                    <div>商品数量：<span th:text="${order.goodscar.reserved1}"></span></div>
+                    <div>收货地址：<span th:text="${order.address}"></span></div>
+                    <div><input type="button" onclick="cancel(this)" value="取消" class="info_submit"></div>
+                </li>
+            </ul>
+            <h3 class="common_title2">已确认订单</h3>
+            <ul class="goods_type_list clearfix">
+                <li th:each="order:${session.ordersEndListById}">
+                    <input type="hidden" th:value="${order.id}"/>
+                    <div>订单号：<span th:text="${#strings.substringAfter(order.id,'-')}"></span></div>
+                    <div>商品名：<span th:text="${order.goods.name}"></span></div>
+                    <div>商品品牌：<span th:text="${order.goods.brand}"></span></div>
+                    <div>商品单价：<span th:text="${order.goods.price}"></span></div>
+                    <div>商品数量：<span th:text="${order.goodscar.reserved1}"></span></div>
+                    <div>收货地址：<span th:text="${order.address}"></span></div>
+                    <div><input type="button" value="已确认" class="info_ensure"></div>
+                </li>
+            </ul>
+        </div>
+        <div class="pagenation">
+<!--            <a class="active">1</a>-->
+        </div>
+    </div>
+</div>
+<!--内容  结束-->
+<script type="text/javascript">
+    function cancel(btn) {
+        var $ids = $(btn).parent().siblings();
+        var id = $($ids[0]).val();
+        var username = $('#username').val();
+        layer.confirm('是否取消订单?', {btn: ['确定', '取消']}, function (){
+            $.post(
+                "cancelOrder",
+                {"id": id,"username": username},
+                function (data) {
+                    if (data.status == 0) {
+                        window.location.reload();
+                    } else if (data.status == 1) {
+                        layer.msg(data.message);
+                    } else {
+                        layer.msg('网络异常');
+                    }
+                }
+            );
+        })
+    }
+</script>
+<!--底部  开始-->
+<div class="footer login_footer">
+</div>
+<!--内容  结束-->
+</body>
+</html>

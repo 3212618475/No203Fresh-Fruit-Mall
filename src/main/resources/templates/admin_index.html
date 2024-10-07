@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+    <link rel="stylesheet" href="css/reset.css"/>
+    <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css"/>
+    <script type="text/javascript" src="js/jquery-1.8.3.min.js"></script>
+    <script type="text/javascript" src="layer/layer.js"></script>
+    <style>
+        .main {
+            width: 100%;
+            height: 800px;
+        }
+
+        .top {
+            width: 100%;
+            height: 15%;
+            background-color: rgba(216, 76, 41, 0.6);
+        }
+
+        .left {
+            width: 15%;
+            height: 85%;
+            background-color: #2AABD2;
+            float: left;
+        }
+
+        .right {
+            width: 85%;
+            height: 85%;
+            /*background-color: #286090;*/
+            float: left;
+        }
+
+        #logo {
+            float: left;
+            position: absolute;
+            top: 25px;
+        }
+
+        #title {
+            /*动画名 周期时常 循环次数  效果*/
+            animation: myanmi 2s infinite linear;
+            width: 800px;
+            height: 100px;
+            text-align: center;
+            line-height: 100px;
+            font-size: 30pt;
+            font-weight: bold;
+            float: left;
+            position: absolute;
+            left: 260px;
+        }
+
+        #head_icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            position: absolute;
+            top: 30px;
+            right: 145px;
+        }
+
+        .login_info {
+            position: absolute;
+            top: 60px;
+            right: 45px;
+        }
+
+        /*自定义动画*/
+        @keyframes myanmi {
+            0% {
+                transform: scale(1.0);
+            }
+            50% {
+                transform: scale(1.2);
+            }
+            100% {
+                transform: scale(1.0);
+            }
+        }
+
+        @keyframes play {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        #head_icon:hover {
+            animation: play 1s 1 linear;
+        }
+
+        /*菜单样式*/
+        .menu_main > li > a {
+            display: block;
+            height: 50px;
+            line-height: 50px;
+            text-align: center;
+            color: #fff;
+            background-color: #398439;
+            font-size: 1.2em;
+            font-weight: bold;
+            border-radius: 5%;
+            text-decoration: none;
+            border-bottom: 1px solid #fff;
+        }
+
+        .menu_main > li > a:hover {
+            background-color: rgba(57, 132, 57, 0.6);
+            cursor: pointer;
+        }
+
+        .menu_first > ul > li > a {
+            display: block;
+            height: 30px;
+            line-height: 30px;
+            text-align: center;
+            color: #fff;
+            border-radius: 5%;
+            text-decoration: none;
+            background-color: #419641;
+            border-bottom: 0.6px solid #fff;
+        }
+
+        .menu_first > ul > li > a:hover {
+            background-color: rgba(65, 150, 65, .6);
+            cursor: pointer;
+        }
+
+        /*.menu_first>ul{
+            display: none;
+        }*/
+
+        .menu_active {
+            background-color: rgba(65, 150, 65, .6);
+        }
+
+
+    </style>
+</head>
+<body>
+<input id="adminUsername" type="hidden" th:value="${session.adminUsername}"/>
+<script type="text/javascript">
+    var adminUsername = $('#adminUsername').val();
+    if (adminUsername == '' || adminUsername == null) {
+        // window.location.reload();
+        window.location.href = "toAdminLogin";
+    }
+</script>
+<div class="main">
+    <!-- LOGO标题区域 -->
+    <div class="top">
+        <img id="logo" src="images/logo.png">
+        <div id="title">
+            天天生鲜后台管理
+        </div>
+        <img id="head_icon" src="images/login_banner.png"/>
+        <div class="login_info">
+            管理员:
+            <span th:text="${session.adminUsername}"></span>
+        </div>
+    </div>
+    <!-- 左侧的菜单区域 -->
+    <div class="left">
+        <ul class="menu_main">
+            <li class="menu_first">
+                <a data-open="none">商品管理</a>
+                <ul hidden>
+                    <li><a th:href="@{toGoodList}" target="right">商品列表</a></li>
+                    <li><a th:href="@{toGoodsUp}" target="right">已上架商品</a></li>
+                    <li><a th:href="@{toGoodsDown}" target="right">已下架商品</a></li>
+                </ul>
+            </li>
+            <li class="menu_first">
+                <a data-open="none">订单管理</a>
+                <ul hidden>
+                    <li><a th:href="@{toOrdersList}" target="right">订单列表</a></li>
+                    <li><a th:href="@{toOrdersWait}" target="right">待发货订单</a></li>
+                    <li><a th:href="@{toOrdersEnd}" target="right">已发货订单</a></li>
+                </ul>
+            </li>
+<!--            <li class="menu_first">-->
+<!--                <a data-open="none">广告管理</a>-->
+<!--                <ul hidden>-->
+<!--                    <li><a>广告列表</a></li>-->
+<!--                    <li><a>轮播广告</a></li>-->
+<!--                    <li><a>固定位广告</a></li>-->
+<!--                </ul>-->
+<!--            </li>-->
+            <li class="menu_first">
+                <a data-open="none">分类管理</a>
+                <ul hidden>
+                    <li><a th:href="@{toGoodsTypeList}" target="right">分类列表</a></li>
+                    <li><a th:href="@{toAddGoodsType}" target="right">添加分类</a></li>
+                </ul>
+            </li>
+            <li class="menu_first">
+                <a data-open="none">系统设置</a>
+                <ul hidden>
+                    <li><a th:href="@{toAdmin}" target="right">个人信息</a></li>
+                    <li><a th:href="@{userToAdminForgetpwd}" target="right">修改密码</a></li>
+                    <li><a th:href="@{userAdminQuit}">安全退出</a></li>
+                </ul>
+            </li>
+        </ul>
+
+    </div>
+    <!-- 右边内容区域 -->
+    <div class="right">
+        <iframe th:src="@{toWelcome}" name="right" width="100%" height="100%" frameborder="0"></iframe>
+    </div>
+</div>
+
+
+<script>
+    $(function () {
+        $('a[href=""]').attr('href', 'javascript:void(0)');
+        $('.menu_first>a').click(function () {
+            $(this).next().slideToggle(200);
+        })
+    })
+</script>
+
+</body>
+</html>

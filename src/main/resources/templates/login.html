@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>天天生鲜－登录</title>
+    <link rel="stylesheet" type="text/css" href="css/reset.css">
+    <link rel="stylesheet" type="text/css" href="css/main.css">
+    <script type="text/javascript" src="js/jquery-1.12.4.min.js"></script>
+    <script type="text/javascript" src="layer/layer.js"></script>
+</head>
+<body>
+<div class="login_top clearfix">
+    <a th:href="@{toIndex}" class="login_logo"><img src="images/logo.png"></a>
+</div>
+
+<div class="login_form_bg">
+    <div class="login_form_wrap clearfix">
+        <div class="login_banner fl"></div>
+        <div class="slogan fl">日夜兼程 · 急速送达</div>
+        <div class="login_form fr">
+            <div class="login_title clearfix">
+                <h1>用户登录</h1>
+                <a th:href="@{toUserRegister}">立即注册</a>
+            </div>
+            <div class="form_input">
+                <form id="from_login">
+                    <input type="hidden" th:value="${session.saveUsername}" id="saveUsername">
+                    <input type="text" name="username" id="username" class="name_input" placeholder="请输入用户" value="">
+                    <div class="user_error">输入错误</div>
+                    <input type="password" name="pwd" id="pwd" class="pass_input" placeholder="请输入密码" value="">
+                    <div class="pwd_error" style="display: none;">输入错误</div>
+
+                    <img th:src="@{checkCode}" onclick="checkCode(this)" class="captcha">
+                    <script type="text/javascript">
+                        function checkCode(img) {
+                            img.src = "checkCode?" + new Date().getTime();
+                        }
+                    </script>
+                    <input id="id_captcha_0" name="captcha_0" type="hidden" value="">
+                    <input autocapitalize="off" autocomplete="off" autocorrect="off" spellcheck="false"
+                           id="id_captcha_1" name="captcha_1" type="text" placeholder="请输入验证码">
+
+                    <div class="yanzheng_error">请输入验证码</div>
+                    <div class="more_input clearfix">
+                        <input type="checkbox" name="" id="unameCheckbox" checked="checked">
+                        <label for="unameCheckbox">记住用户名</label>
+                        <a th:href="@{userToForgetPwd}">忘记密码</a>
+                    </div>
+                    <input type="button" name="" value="登录" onclick="login()" class="input_submit">
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    var username;
+    var pwd;
+    var checkcode;
+    var flag1;
+    var flag2;
+    var flag3;
+    $('#username').val($("#saveUsername").val());
+    if ($('#username').val() != '') {
+        flag1 = true;
+        username = $('#username').val();
+    }
+    $('#username').blur(function () {
+        username = $('#username').val();
+        // alert(username);
+        var reg_username = /^\w{6,10}$/;
+        flag1 = reg_username.test(username);
+        if (flag1) {
+            layer.tips('用户名合法', '#username');
+            $("#username").css("border", "");
+        } else {
+            layer.tips('用户名需满足6到10位', '#username');
+            $("#username").css("border", "1px solid red");
+        }
+    });
+    $('#pwd').blur(function () {
+        pwd = $('#pwd').val();
+        var reg_password = /^\w{6,10}$/;
+        flag2 = reg_password.test(pwd);
+        if (flag2) {
+            layer.tips('密码合法', '#pwd');
+            $("#pwd").css("border", "");
+        } else {
+            layer.tips('密码需满足6到10位', '#pwd');
+            $("#pwd").css("border", "1px solid red");
+        }
+    });
+    $('#id_captcha_1').blur(function () {
+        checkcode = $('#id_captcha_1').val();
+        var reg_checkcode = /^\w{4}$/;
+        flag3 = reg_checkcode.test(checkcode);
+        if (!flag3) {
+            layer.tips('验证码必须是四位', '#id_captcha_1');
+            $("#id_captcha_1").css("border", "1px solid red");
+        }
+    });
+
+    function login() {
+        if (flag1 && flag2 && flag3) {
+            var unameCheckbox = $('#unameCheckbox')[0];
+            if (unameCheckbox.checked) {
+                // window.location.href = "login.do?username="+username+"&pwd="+pwd+"&checkcode="+checkcode+"&checked="+1;
+                $.post(
+                    "userLogin",
+                    {"username": username, "pwd": pwd, "checkcode": checkcode, "checked": 1},
+                    function (data) {
+                        if (data.status == 0) {
+                            window.location.href = "toIndex";
+                        } else if (data.status == 1) {
+                            layer.msg(data.message);
+                        }
+                    }
+                );
+            } else {
+                // window.location.href = "login.do?username="+username+"&pwd="+pwd+"&checkcode="+checkcode+"&checked="+0;
+                $.post(
+                    "userLogin",
+                    {"username": username, "pwd": pwd, "checkcode": checkcode, "checked": 0},
+                    function (data) {
+                        if (data.status == 0) {
+                            window.location.href = "toIndex";
+                        } else if (data.status == 1) {
+                            layer.msg(data.message);
+                        }
+                    }
+                );
+            }
+        } else {
+            layer.msg('请将信息填写完整');
+        }
+    }
+</script>
+<div class="footer login_footer">
+</div>
+</body>
+</html>

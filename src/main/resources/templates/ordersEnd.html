@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
+    <title>Document</title>
+    <link rel="stylesheet" type="text/css" href="css/reset.css">
+    <link rel="stylesheet" type="text/css" href="css/main.css">
+    <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css"/>
+    <script type="text/javascript" src="js/jquery-1.12.4.min.js"></script>
+<!--    <script type="text/javascript" src="bootstrap/js/bootstrap.min.js"></script>-->
+    <script type="text/javascript" src="layer/layer.js"></script>
+    <style>
+        .title {
+            padding-top: 10px;
+            text-indent: 2em;
+            letter-spacing: 8px; /*字符间距*/
+            /*width: 22px;*/
+            /*height: 18px;*/
+        }
+
+        a {
+            color: #000;
+        }
+
+        a:hover {
+            color: red;
+            text-decoration: none;
+        }
+
+        hr {
+            border: 1.5px solid #ccc;
+        }
+        ul li div span{
+            width: 20px;
+            height: 18px;
+        }
+    </style>
+</head>
+<body>
+<div class="title">
+    <a href="#" class="tips">订单管理</a>&nbsp;-&gt;&nbsp;<a href="">已发货订单</a>
+</div>
+<hr/>
+<div class="right_content clearfix">
+    <div class="site_con">
+        <ul class="goods_type_list clearfix" id="goodsImg">
+            <li th:each="order:${session.ordersEndList}">
+                <input type="hidden" th:value="${order.id}"/>
+                <div>订单号：<span th:text="${#strings.substringAfter(order.id,'-')}"></span></div>
+                <div>商品名：<span th:text="${order.goods.name}"></span></div>
+                <div>商品品牌：<span th:text="${order.goods.brand}"></span></div>
+                <div>商品单价：<span th:text="${order.goods.price}"></span></div>
+                <div>商品数量：<span th:text="${order.goodscar.reserved1}"></span></div>
+                <div>收货地址：<span th:text="${order.address}"></span></div>
+                <div><input type="button" value="已发货" class="info_submit"></div>
+            </li>
+        </ul>
+    </div>
+    <div class="pagenation">
+        <!--            <a class="active">1</a>-->
+    </div>
+</div>
+<input id="adminUsername" type="hidden" th:value="${session.adminUsername}"/>
+<script type="text/javascript">
+    var adminUsername = $('#adminUsername').val();
+    if (adminUsername == '' || adminUsername == null) {
+        // window.location.reload();
+        window.location.href = "toAdminLogin";
+    }
+    $(function (){
+        $.post(
+            "ordersEndList",
+            function (data) {
+                if (data.status == 0) {
+                    // window.location.reload();
+                } else if (data.status == 1) {
+                    layer.msg(data.message);
+                } else {
+                    layer.msg('网络异常');
+                }
+            }
+        );
+    })
+</script>
+</body>
+</html>

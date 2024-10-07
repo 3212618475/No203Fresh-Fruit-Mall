@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
+    <title>Document</title>
+    <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css"/>
+    <script type="text/javascript" src="js/jquery-1.12.4.min.js"></script>
+    <script type="text/javascript" src="bootstrap/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="layer/layer.js"></script>
+    <style>
+        .title {
+            padding-top: 10px;
+            text-indent: 2em;
+            letter-spacing: 8px; /*字符间距*/
+        }
+
+        a {
+            color: #000;
+        }
+
+        a:hover {
+            color: red;
+            text-decoration: none;
+        }
+
+        hr {
+            border: 1.5px solid #ccc;
+        }
+
+        .input_group {
+            padding-left: 30px;
+            float: left;
+        }
+
+        .reach {
+            float: right;
+            margin-right: 50px;
+        }
+
+        .con {
+            position: relative;
+            top: 20px;
+            width: 900px;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+
+<!--模态窗-->
+<div class="modal animated fadeInUp" id="addGoods">
+    <!--<form class="form-horizontal" id="goods_form_add" method="post" enctype="multipart/form-data" action="/addGoods.do">-->
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-dismiss="modal">&times;</button>
+                <h4>添加商品</h4>
+            </div>
+            <div class="modal-body">
+                <!--包含图片等文件的表单提交注意事项
+                1.提交方式必须是post
+                2.enctype的值必须改为multipart/form-data
+                3.选择文件的按钮必须有name属性-->
+                <form class="form-horizontal" id="goods_form_add" method="post" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">选择商品图片</label>
+                        <div class="col-sm-2">
+                            <button class="btn btn-info" type="button" id="addPhoto">
+                                <span class="glyphicon glyphicon-plus"></span>
+                                选择图片
+                            </button>
+                            <input type="file" name="file" style="display: none;" id="file"/>
+                        </div>
+                        <img src="images/wtp.png" id="goods_img" style="width: 150px;height: 200px;"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">商品名</label>
+                        <div class="col-sm-3">
+                            <input type="text" name="name" placeholder="商品名" class="form-control"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">商品详情</label>
+                        <div class="col-sm-7">
+                            <textarea required class="form-control" rows="5" name="msg" style="resize: none;"
+                                      placeholder="商品详情。。。"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">商品分类</label>
+                        <div class="col-sm-3">
+                            <select name="groupid" id="groupid" class="form-control">
+                                <option>请选择</option>
+                                <!-- 									<option value="新鲜水果">新鲜水果</option> -->
+                                <!-- 									<option value="速冻食品">速冻食品</option> -->
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">商品单价</label>
+                        <div class="col-sm-3">
+                            <input type="text" name="price" placeholder="商品单价" class="form-control"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">商品数量</label>
+                        <div class="col-sm-3">
+                            <input type="number" name="count" placeholder="商品数量" class="form-control"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">品牌</label>
+                        <div class="col-sm-3">
+                            <input type="text" name="brand" placeholder="品牌" class="form-control"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">编号</label>
+                        <div class="col-sm-3">
+                            <input type="text" name="no" placeholder="编号" class="form-control"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">毛重</label>
+                        <div class="col-sm-3">
+                            <input type="text" name="gross" placeholder="毛重" class="form-control"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">重量</label>
+                        <div class="col-sm-3">
+                            <input type="text" name="weight" placeholder="重量" class="form-control"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">包装</label>
+                        <div class="col-sm-3">
+                            <input type="text" name="pack" placeholder="包装" class="form-control"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">进口区</label>
+                        <div class="col-sm-3">
+                            <input type="text" name="place" placeholder="进口区" class="form-control"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">生产地</label>
+                        <div class="col-sm-3">
+                            <input type="text" name="address" placeholder="生产地" class="form-control"/>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-default" data-dismiss="modal">取消</button>
+                <button class="btn btn-primary" id="submit">提交</button>
+            </div>
+        </div>
+    </div>
+    <!--</form>-->
+</div>
+<!--编辑模态窗-->
+<div class="modal animated fadeInUp" id="GoodsUpdate">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-dismiss="modal">&times;</button>
+                <h4>商品编辑</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" id="goods_form_update" method="post" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">商品图片</label>
+                        <img src="images/wtp.png" id="goodsimg" style="width: 150px;height: 200px;"/>
+                    </div>
+                    <input type="hidden" name="id" id="goods_id"/>
+                    <input type="hidden" id="goods_photo"/>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">商品名</label>
+                        <div class="col-sm-3">
+                            <input type="text" readonly="readonly" id="goodsname" name="name" placeholder="商品名"
+                                   class="form-control"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">商品单价</label>
+                        <div class="col-sm-3">
+                            <input type="text" name="price" id="goodsprice" placeholder="商品单价" class="form-control"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">商品数量</label>
+                        <div class="col-sm-3">
+                            <input type="number" name="count" id="goodscount" placeholder="商品数量" class="form-control"/>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-default" data-dismiss="modal">取消</button>
+                <button class="btn btn-primary" id="submitUpdate">提交</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--详情的模态窗-->
+<div class="modal animated fadeInUp" id="goodsDetail">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-dismiss="modal">&times;</button>
+                <h4>商品详情</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" id="goods_form_detail" method="post" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">商品图片</label>
+                        <img src="images/wtp.png" id="img" style="width: 150px;height: 200px;"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">商品名</label>
+                        <div class="col-sm-3">
+                            <input type="text" readonly="readonly" id="name" name="name" placeholder="商品名"
+                                   class="form-control"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">商品详情</label>
+                        <div class="col-sm-7">
+                            <textarea required readonly="readonly" id="msg" class="form-control" rows="5" name="msg"
+                                      style="resize: none;" placeholder="商品详情。。。"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">商品分类</label>
+                        <div class="col-sm-3">
+                            <input type="text" readonly="readonly" placeholder="商品分类" name="groupid" id="goodstype"
+                                   class="form-control"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">商品单价</label>
+                        <div class="col-sm-3">
+                            <input type="text" readonly="readonly" id="price" name="price" placeholder="商品单价"
+                                   class="form-control"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">商品数量</label>
+                        <div class="col-sm-3">
+                            <input type="number" readonly="readonly" id="count" name="count" placeholder="商品数量"
+                                   class="form-control"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">品牌</label>
+                        <div class="col-sm-3">
+                            <input type="text" readonly="readonly" id="brand" name="brand" placeholder="品牌"
+                                   class="form-control"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">编号</label>
+                        <div class="col-sm-3">
+                            <input type="text" readonly="readonly" id="no" name="no" placeholder="编号"
+                                   class="form-control"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">毛重</label>
+                        <div class="col-sm-3">
+                            <input type="text" readonly="readonly" id="gross" name="gross" placeholder="毛重"
+                                   class="form-control"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">重量</label>
+                        <div class="col-sm-3">
+                            <input type="text" readonly="readonly" id="weight" name="weight" placeholder="重量"
+                                   class="form-control"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">包装</label>
+                        <div class="col-sm-3">
+                            <input type="text" readonly="readonly" id="pack" name="pack" placeholder="包装"
+                                   class="form-control"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">进口区</label>
+                        <div class="col-sm-3">
+                            <input type="text" readonly="readonly" id="place" name="place" placeholder="进口区"
+                                   class="form-control"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">生产地</label>
+                        <div class="col-sm-3">
+                            <input type="text" readonly="readonly" id="address" name="address" placeholder="生产地"
+                                   class="form-control"/>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-default" data-dismiss="modal">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="title">
+    <a href="" class="tips">商品管理</a>&nbsp;-&gt;&nbsp;<a href="">商品列表</a>
+</div>
+<hr/>
+<div class="input_group">
+    <button class="btn btn-info btn-sm" id="selectAll">
+        <span class="glyphicon glyphicon-ok"></span>
+        全选
+    </button>
+    <button class="btn btn-danger btn-sm" id="deleteAll">
+        <span class="glyphicon glyphicon-trash"></span>
+        批量删除
+    </button>
+    <button class="btn btn-success btn-sm" type="button" data-toggle="modal" data-target="#addGoods">
+        <span class="glyphicon glyphicon-plus"></span>
+        添加商品
+    </button>
+</div>
+
+<div class="reach">
+    <input type="text" id="search" class="input-sm chack" placeholder="输入搜索关键字"/>
+    <button id="search_btn" type="button" class="btn btn-success btn_cord">
+        <span class="glyphicon glyphicon-search"></span>
+        搜索
+    </button>
+</div>
+
+<div class="con">
+    <table class="table table-bordered table-hover table-responsive text-center">
+        <thead>
+        <tr>
+            <td>
+                <input type="checkbox" id="checkAll"/>
+            </td>
+            <td>编号</td>
+            <td>商品名</td>
+            <td>商品类别</td>
+            <td>单价</td>
+            <td>库存</td>
+            <td>状态</td>
+            <td>操作</td>
+        </tr>
+        </thead>
+        <tbody id="goodsBody">
+
+        </tbody>
+    </table>
+    <div class="text-center">
+        <ul class="pagination" id="page">
+
+        </ul>
+        共<span id="totalPage"></span>页
+    </div>
+</div>
+
+<script type="text/javascript">
+    //纪录当前页
+    var recordPage;
+    //加载第一页
+    findByPage(1);
+
+    //分页函数
+    function findByPage(page) {
+        $('#goodsBody').empty();
+        //当前页
+        var currentPage = page;
+        //纪录当前页
+        recordPage = currentPage;
+        //搜索框的值
+        var search = $('#search').val();
+        $.post(
+            'goodsList',
+            {'currentPage': currentPage, 'search': search},
+            function (data) {
+                if (data.status == 0) {
+                    var pageBean = data.result;
+                    var totalPage = pageBean.totalPage;
+                    var goodsList = pageBean.lists;
+                    var type = '';
+                    var button = '';
+                    var no = pageBean.pageSize * (currentPage - 1);
+                    for (var i = 0; i < goodsList.length; i++) {
+                        if (goodsList[i].dr == 0) {
+                            type = '已上架';
+                            button = '<button class="btn btn-sm btn-warning" onclick="goods_down(this)">'
+                                + '<span class="glyphicon glyphicon-arrow-down"></span>'
+                                + '下架'
+                                + '</button> ';
+                        } else {
+                            type = '已下架';
+                            button = '<button class="btn btn-sm btn-info" onclick="goods_up(this)">'
+                                + '<span class="glyphicon glyphicon-arrow-up"></span>'
+                                + '上架'
+                                + '</button> ';
+                        }
+                        $('#goodsBody').append('<tr>'
+                            + '<input type="hidden" class="goodsid" value="' + goodsList[i].id + '">'
+                            + '<input type="hidden" value="' + goodsList[i].photo + '">'
+                            + '<input type="hidden" value="' + (i + 1) + '">'
+                            + '<input type="hidden" value="' + goodsList.length + '">'
+                            + '<td>'
+                            + '<input type="checkbox" name="sub" class="duoxuankuang" />'
+                            + '</td>'
+                            + '<td>' + (i + 1 + no) + '</td>'
+                            + '<td>' + goodsList[i].name + '</td>'
+                            + '<td>' + goodsList[i].goodstype.name + '</td>'
+                            + '<td>' + goodsList[i].price + '</td>'
+                            + '<td>' + goodsList[i].count + '</td>'
+                            + '<td>' + type + '</td>'
+                            + '<td>'
+                            + '<button data-toggle="modal" data-target="#goodsDetail" class="btn btn-sm btn-info" onclick="goods_details(this)" data-message="' + goodsList[i].msg + '">'
+                            + '<span class="glyphicon glyphicon-info-sign"></span>'
+                            + '详情'
+                            + '</button> '
+                            + '<button data-toggle="modal" onclick="goods_update(this)" data-target="#GoodsUpdate" class="btn btn-sm btn-success">'
+                            + '<span class="glyphicon glyphicon-edit"></span>'
+                            + '编辑'
+                            + '</button> '
+                            + button
+                            + '<button class="btn btn-sm btn-danger" onclick="goods_delete(this)">'
+                            + '<span class="glyphicon glyphicon-trash"></span>'
+                            + '删除'
+                            + '</button>'
+                            + '</td>'
+                            + '</tr>');
+                    }
+                    //添加分页工具栏
+                    $('#page').empty();
+                    var begin = 1;
+                    var end = 1;
+                    if (totalPage <= 5) {
+                        begin = 1;
+                        end = totalPage;
+                    } else {
+                        begin = currentPage - 2;
+                        end = currentPage + 2;
+                        if (begin <= 1) {
+                            begin = 1;
+                            end = 5;
+                        }
+                        if (end >= totalPage) {
+                            begin = totalPage - 4;
+                            end = totalPage;
+                        }
+                    }
+                    //添加上一页的按钮
+                    $('#page').append('<li id="left" class=""><span onclick="findByPage(' + (currentPage - 1) + ')" aria-hidden="true">&laquo;</span></li>');
+                    //添加中间的页数
+                    for (var i = begin; i <= end; i++) {
+                        $('#page').append('<li class=""><a onclick="findByPage(' + i + ')">' + i + '</a></li>');
+                    }
+                    //添加下一页的按钮
+                    $('#page').append('<li id="right" class=""><span onclick="findByPage(' + (currentPage + 1) + ')" aria-hidden="true">&raquo;</span></li>');
+                    //若是第一页,给上一页添加禁用样式,并且清除点击事件
+                    if (currentPage == 1) {
+                        //添加禁用样式
+                        $('#left').addClass('disabled');
+                        //清除点击事件
+                        $('#left>span').removeAttr('onclick');
+                    }
+                    if (currentPage == totalPage) {
+                        //添加禁用样式
+                        $('#right').addClass('disabled');
+                        //清除点击事件
+                        $('#right>span').removeAttr('onclick');
+                    }
+                    //添加当前页的激活样式
+                    $('#page>li').eq(currentPage - begin + 1).addClass('active');
+                    //显示总页数
+                    $('#totalPage').html(totalPage);
+                } else if (data.status == 1) {
+                    $('#page').empty();
+                    $('#totalPage').html('');
+                    layer.msg(data.message);
+                } else {
+                    layer.msg('网络异常');
+                }
+            }
+        );
+    }
+
+    //搜索
+    $('#search_btn').click(function () {
+        findByPage(1);
+        // findByPage(page);
+    })
+    //动态分类下拉选的函数
+    selectGoodsType();
+
+    function selectGoodsType() {
+        //清空内部元素
+        $("#groupid").empty();
+        $.post(
+            "selectGoodsType",
+            function (data) {
+                if (data.status == 0) {
+                    var selectGoodsList = data.result;
+                    for (var i = 0; i < selectGoodsList.length; i++) {
+                        var name = selectGoodsList[i].name;
+                        var id = selectGoodsList[i].id;
+                        $('#groupid').append('<option value = ' + id + '>' + name + '</option>');
+                    }
+                } else if (data.status == 1) {
+                    layer.msg(data.message);
+                } else {
+                    layer.msg('网络异常');
+                }
+            }
+        );
+    }
+
+    //实现全选
+    $("#checkAll").click(function () {
+        //获取当前页所有的复选框
+        var $inputs = $('input[name="sub"]');
+        //遍历
+        for (var i in $inputs) {
+            $inputs[i].checked = this.checked;
+        }
+    })
+    $("#selectAll").click(function () {
+        var $inputs = $('input[name="sub"]');
+        if ($("#checkAll")[0].checked) {
+            $("#checkAll")[0].checked = false;
+            for (var i in $inputs) {
+                $inputs[i].checked = false;
+            }
+        } else {
+            $("#checkAll")[0].checked = true;
+            for (var i in $inputs) {
+                $inputs[i].checked = true;
+            }
+        }
+    })
+    $("#deleteAll").click(function () {
+        var $boxes = $(".duoxuankuang");
+        var ids = "";
+        var $tds = $(".goodsid");
+        // var id = $($tds[0]).val();
+        for (var i = 0; i < $boxes.length; i++) {
+            var box = $boxes[i];
+            var id = $($tds[i]).val();
+            if (box.checked) {
+                ids += id + ",";
+            }
+        }
+        if (ids.length == 0) {
+            layer.alert("请选择您要删除的数据");
+        } else {
+            layer.confirm('是否确认删除?', {btn: ['删除', '取消']}, function (index) {
+                $.post(
+                    "deleteAll",
+                    {"ids": ids},
+                    function (data) {
+                        if (data.status == 0) {
+                            // window.location.reload();
+                            $("#checkAll")[0].checked = false;
+                            layer.close(index);
+                            if (recordPage<=1){
+                                findByPage(1);
+                            }else {
+                                findByPage(recordPage-1);
+                            }
+                        } else if (data.status == 1) {
+                            layer.msg(data.message);
+                        } else {
+                            layer.msg('网络异常');
+                        }
+                    }
+                );
+            })
+        }
+    })
+    $(function () {
+        // 选择图片按钮的实现
+        $('#addPhoto').click(function () {
+            $('#file').click();
+        })
+        //当选中图片后显示
+        $('#file').change(function (event) {
+            //alert('111');
+            var file = event.currentTarget.files[0];
+            //创建文件读取流
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                $('#goods_img').attr('src', e.target.result);
+            }
+            reader.readAsDataURL(file);
+        })
+    })
+    $('#submit').click(function () {
+        //将form表单封装成一个对象,一个FormData对象
+        var formdata = new FormData($('#goods_form_add')[0]);
+        $.ajax({
+            url: 'addGoods',
+            data: formdata,
+            type: 'post',
+            contentType: false,
+            processData: false,
+            dataType: 'json',
+            success: function (data) {
+                if (data.status == 0) {
+                    //刷新当前页面
+                    window.location.reload();
+                } else {
+                    layer.msg(data.message);
+                }
+            },
+            error: function () {
+                layer.msg('网络异常');
+            }
+        })
+    })
+
+    function goods_update(btn) {
+        var $tds = $(btn).parent().siblings();
+        var id = $($tds[0]).val();
+        $('#goods_photo').val($($tds[1]).val());
+        var photo = $('#goods_photo').val();
+        $('#goodsimg').attr('src', photo);
+        $.post(
+            "loadGoods",
+            {"id": id},
+            function (data) {
+                if (data.status == 0) {
+                    $('#goods_id').val(data.result.id);
+                    $('#goodsname').val(data.result.name);
+                    $('#goodsprice').val(data.result.price);
+                    $('#goodscount').val(data.result.count);
+                } else if (data.status == 1) {
+                    layer.msg(data.message);
+                } else {
+                    layer.msg('网络异常');
+                }
+            }
+        );
+    }
+
+    $('#submitUpdate').click(function () {
+        var id = $('#goods_id').val();
+        var price = $('#goodsprice').val();
+        var count = $('#goodscount').val();
+        $.post(
+            "goodsUpdate",
+            {"id": id, "price": price, "count": count},
+            function (data) {
+                if (data.status == 0) {
+                    // window.location.reload();
+                    $('#GoodsUpdate').hide();
+                    $('.modal-backdrop').hide();
+                    findByPage(recordPage);
+                } else if (data.status == 1) {
+                    layer.msg(data.message);
+                } else {
+                    layer.msg('网络异常');
+                }
+            }
+        );
+    })
+
+    function goods_up(btn) {
+        var $tds = $(btn).parent().siblings();
+        var id = $($tds[0]).val();
+        layer.confirm('是否确认上架?', {btn: ['上架', '取消']}, function (index) {
+            $.post(
+                "goodsUp",
+                {'id': id},
+                function (data) {
+                    if (data.status == 0) {
+                        // window.location.reload();
+                        layer.close(index);
+                        findByPage(recordPage);
+                    } else if (data.status == 1) {
+                        layer.msg(data.message);
+                    } else {
+                        layer.msg('网络异常');
+                    }
+                }
+            );
+        })
+    }
+
+    function goods_down(btn) {
+        var $tds = $(btn).parent().siblings();
+        var id = $($tds[0]).val();
+        layer.confirm('是否确认下架?', {btn: ['下架', '取消']}, function (index) {
+            $.post(
+                "goodsDown",
+                {'id': id},
+                function (data) {
+                    if (data.status == 0) {
+                        // window.location.reload();
+                        layer.close(index);
+                        findByPage(recordPage);
+                    } else if (data.status == 1) {
+                        layer.msg(data.message);
+                    } else {
+                        layer.msg('网络异常');
+                    }
+                }
+            );
+        })
+    }
+
+    function goods_delete(btn) {
+        var $tds = $(btn).parent().siblings();
+        var id = $($tds[0]).val();
+        var no = $($tds[2]).val();
+        var len = $($tds[3]).val();
+        layer.confirm('是否确认删除?', {btn: ['删除', '取消']}, function (index) {
+            $.post(
+                "goodsDelete",
+                {'id': id},
+                function (data) {
+                    if (data.status == 0) {
+                        // window.location.reload();
+                        layer.close(index);
+                        if (no == 1 && len == 1 && recordPage>1){
+                            findByPage(recordPage-1);
+                        }else {
+                            findByPage(recordPage);
+                        }
+                    } else if (data.status == 1) {
+                        layer.msg(data.message);
+                    } else {
+                        layer.msg('网络异常');
+                    }
+                }
+            );
+        })
+    }
+
+    //详情
+    function goods_details(btn) {
+        //获取所有的td
+        var $tds = $(btn).parent().siblings();
+        //获取隐藏域中的图片路径
+        var photo = $($tds[1]).val();//获取value中的值
+        $.post(
+            "goodsDetail",
+            {"photo": photo},
+            function (data) {
+                if (data.status == 0) {
+                    $('#img').attr('src', photo);
+                    $('#name').val(data.result.name);
+                    $('#goodstype').val(data.result.groupid);
+                    $('#brand').val(data.result.brand);
+                    $('#no').val(data.result.no);
+                    $('#gross').val(data.result.gross);
+                    $('#place').val(data.result.place);
+                    $('#weight').val(data.result.weight);
+                    $('#pack').val(data.result.pack);
+                    $('#address').val(data.result.address);
+                    $('#msg').val(data.result.msg);
+                    $('#price').val(data.result.price);
+                    $('#count').val(data.result.count);
+                    $(btn).attr('data-target', '#goodsDetail');
+                } else if (data.status == 1) {
+                    layer.msg(data.message);
+                } else {
+                    layer.msg('网络异常');
+                }
+            }
+        );
+    }
+</script>
+</body>
+</html>

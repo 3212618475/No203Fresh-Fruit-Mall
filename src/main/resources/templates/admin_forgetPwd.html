@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>天天生鲜－忘记密码</title>
+    <link rel="stylesheet" type="text/css" href="css/reset.css">
+    <link rel="stylesheet" type="text/css" href="css/main.css">
+    <script type="text/javascript" src="js/jquery-1.12.4.min.js"></script>
+    <script type="text/javascript" src="bootstrap/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="layer/layer.js"></script>
+    <style>
+        .title {
+            padding-top: 10px;
+            text-indent: 2em;
+            letter-spacing: 8px; /*字符间距*/
+        }
+
+        a {
+            color: #000;
+        }
+
+        a:hover {
+            color: red;
+            text-decoration: none;
+        }
+
+        hr {
+            border: 1.5px solid #ccc;
+        }
+
+        .input_group {
+            padding-left: 30px;
+            float: left;
+        }
+
+        .reach {
+            float: right;
+            margin-right: 50px;
+        }
+
+        .con {
+            position: relative;
+            top: 20px;
+            width: 900px;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+<div class="title">
+    <a href="" class="tips">系统设置</a>&nbsp;-&gt;&nbsp;<a href="">修改密码</a>
+</div>
+<hr/>
+<div class="right_content clearfix">
+    <div class="info_con clearfix">
+        <div class="n_sub_con">
+            <div class="n_r_con">
+                <div class="n_reg_form clearfix">
+                    <form id="reg_form">
+                        <input type="hidden" name="" value="">
+                        <ul>
+                            <li>
+                                <label for="user_name">用户名:</label>
+                                <input type="text" name="user_name" id="user_name">
+                                <span class="n_error_tip">提示信息</span>
+                            </li>
+                            <li class="n_yanzheng">
+                                <label for="id_captcha_1">验证码:</label>
+                                <img th:src="@{checkCode}" onclick="checkCode(this)" class="captcha">
+                                <script type="text/javascript">
+                                    function checkCode(img) {
+                                        img.src = "checkCode?" + new Date().getTime();
+                                    }
+                                </script>
+                                <input id="id_captcha_0" name="captcha_0" type="hidden" value="">
+                                <input autocapitalize="off" autocomplete="off" autocorrect="off" spellcheck="false"
+                                       id="id_captcha_1" name="captcha_1" type="text">
+
+                                <span class="n_error_tip" style="height:0;line-height:10px">提示信息</span>
+                                <!--<a class="n_but_con">-->
+                                <!--<span class="n_but1">获取邮箱</span>-->
+                                <!--<span class="n_but2">验证码</span>-->
+                                <!--</a>-->
+                            </li>
+                            <li>
+                                <label for="email">邮箱验证:</label>
+                                <input type="text" name="email" id="email">
+                                <span class="n_error_tip">提示信息</span>
+                            </li>
+                            <li>
+                                <label for="pwd">密码:</label>
+                                <input type="password" name="pwd" id="pwd">
+                                <span class="n_error_tip">提示信息</span>
+                            </li>
+                            <li>
+                                <label for="cpwd">确认密码:</label>
+                                <input type="password" name="cpwd" id="cpwd">
+                                <span class="n_error_tip">提示信息</span>
+                            </li>
+                            <li class="n_reg_sub">
+                                <input type="button" value="提 交" onclick="forgetPwd()">
+                            </li>
+                        </ul>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    var username;
+    var checkcode;
+    var password;
+    var email;
+    var flag1;
+    var flag2;
+    var flag3;
+    var flag4;
+    var flag5;
+    $('#user_name').blur(function () {
+        username = $("#user_name").val();
+        var reg_username = /^\w{6,10}$/;
+        flag1 = reg_username.test(username);
+        if (flag1) {
+            layer.tips('账号名合法', '#user_name');
+            $("#user_name").css("border", "");
+        } else {
+            layer.tips('账号名需满足6到10位', '#user_name');
+            $("#user_name").css("border", "1px solid red");
+        }
+    });
+    $('#id_captcha_1').blur(function () {
+        checkcode = $('#id_captcha_1').val();
+        var reg_checkcode = /^\w{4}$/;
+        flag5 = reg_checkcode.test(checkcode);
+        if (!flag5) {
+            layer.tips('验证码必须是四位', '#id_captcha_1');
+            $("#id_captcha_1").css("border", "1px solid red");
+        }
+    });
+    $('#pwd').blur(function () {
+        password = $('#pwd').val();
+        var reg_password = /^\w{6,10}$/;
+        flag2 = reg_password.test(password);
+        if (flag2) {
+            layer.tips('密码合法', '#pwd');
+            $("#pwd").css("border", "");
+        } else {
+            layer.tips('密码需满足6到10位', '#pwd');
+            $("#pwd").css("border", "1px solid red");
+        }
+    });
+    $('#cpwd').blur(function () {
+        var repassword = $('#cpwd').val();
+        flag3 = (password == repassword && repassword != "");
+        if (password == repassword && repassword != "") {
+            layer.tips('两次密码一致', '#cpwd');
+            $("#cpwd").css("border", "");
+        } else {
+            layer.tips('两次密码不一致', '#cpwd');
+            $("#cpwd").css("border", "1px solid red");
+        }
+    });
+    $('#email').blur(function () {
+        email = $('#email').val();
+        var reg_email = /^[0-9a-zA-Z_.-]+[@][0-9a-zA-Z_.-]+[.][a-zA-Z]{2,3}$/;
+        flag4 = reg_email.test(email);
+        if (flag4) {
+            layer.tips('邮箱格式正确', '#email');
+            $("#email").css("border", "");
+        } else {
+            layer.tips('邮箱格式不正确', '#email');
+            $("#email").css("border", "1px solid red");
+        }
+    });
+
+    function forgetPwd() {
+        if (flag1 && flag2 && flag3 && flag4 && flag5) {
+            // window.location.href = "forgetPwd.do?username="+username+"&password="+password+"&email="+email+"&checkcode="+checkcode;
+            $.post(
+                "userAdminForgetPwd",
+                {"username": username, "password": password, "email": email, "checkcode": checkcode},
+                function (data) {
+                    if (data.status == 0) {
+                        window.location.href = "toAdminLogin";
+                    } else if (data.status == 1) {
+                        layer.msg(data.message);
+                    }
+                }
+            );
+        } else {
+            layer.msg('请检查信息是否完整');
+        }
+    }
+</script>
+</body>
+</html>

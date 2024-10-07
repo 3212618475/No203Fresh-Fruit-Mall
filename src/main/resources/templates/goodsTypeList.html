@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
+    <title>Document</title>
+    <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css"/>
+    <script type="text/javascript" src="js/jquery-1.12.4.min.js"></script>
+    <script type="text/javascript" src="bootstrap/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="layer/layer.js"></script>
+    <style>
+        .title {
+            padding-top: 10px;
+            text-indent: 2em;
+            letter-spacing: 8px; /*字符间距*/
+        }
+
+        a {
+            color: #000;
+        }
+
+        a:hover {
+            color: red;
+            text-decoration: none;
+        }
+
+        hr {
+            border: 1.5px solid #ccc;
+        }
+
+        .input_group {
+            padding-left: 30px;
+            float: left;
+        }
+
+        .reach {
+            float: right;
+            margin-right: 50px;
+        }
+
+        .con {
+            position: relative;
+            top: 20px;
+            width: 900px;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+<div class="title">
+    <a href="" class="tips">分类管理</a>&nbsp;-&gt;&nbsp;<a href="">分类列表</a>
+</div>
+<hr/>
+<div class="input_group">
+</div>
+<div class="reach">
+    <input type="text" id="search" class="input-sm chack" placeholder="输入搜索关键字"/>
+    <button id="search_btn" type="button" class="btn btn-success btn_cord">
+        <span class="glyphicon glyphicon-search"></span>
+        搜索
+    </button>
+</div>
+<div class="con">
+    <table class="table table-bordered table-hover table-responsive text-center">
+        <thead>
+        <tr>
+            <td>编号</td>
+            <td>商品类别</td>
+        </tr>
+        </thead>
+        <tbody id="goodsBody">
+
+        </tbody>
+    </table>
+    <div class="text-center">
+        <ul class="pagination" id="page">
+
+        </ul>
+        共<span id="totalPage"></span>页
+    </div>
+</div>
+<script type="text/javascript">
+    findByPage(1);
+
+    function findByPage(page) {
+        $('#goodsBody').empty();
+        //当前页
+        var currentPage = page;
+        //搜索框的值
+        var search = $('#search').val();
+        $.post(
+            'addGoodsTypeList',
+            {'currentPage': currentPage, 'search': search},
+            function (data) {
+                if (data.status == 0) {
+                    var pageBean = data.result;
+                    var totalPage = pageBean.totalPage;
+                    var goodsTypeList = pageBean.lists;
+                    var no = pageBean.pageSize * (currentPage - 1);
+                    for (var i = 0; i < goodsTypeList.length; i++) {
+                        $('#goodsBody').append('<tr>'
+                            + '<input type="hidden" class="goodsid" value="' + goodsTypeList[i].id + '">'
+                            + '<td>' + (i + 1 + no) + '</td>'
+                            + '<td>' + goodsTypeList[i].name + '</td>'
+                            + '</tr>');
+                    }
+                    //添加分页工具栏
+                    $('#page').empty();
+                    var begin = 1;
+                    var end = 1;
+                    if (totalPage <= 5) {
+                        begin = 1;
+                        end = totalPage;
+                    } else {
+                        begin = currentPage - 2;
+                        end = currentPage + 2;
+                        if (begin <= 1) {
+                            begin = 1;
+                            end = 5;
+                        }
+                        if (end >= totalPage) {
+                            begin = totalPage - 4;
+                            end = totalPage;
+                        }
+                    }
+                    //添加上一页的按钮
+                    $('#page').append('<li id="left" class=""><span onclick="findByPage(' + (currentPage - 1) + ')" aria-hidden="true">&laquo;</span></li>');
+                    //添加中间的页数
+                    for (var i = begin; i <= end; i++) {
+                        $('#page').append('<li class=""><a onclick="findByPage(' + i + ')">' + i + '</a></li>');
+                    }
+                    //添加下一页的按钮
+                    $('#page').append('<li id="right" class=""><span onclick="findByPage(' + (currentPage + 1) + ')" aria-hidden="true">&raquo;</span></li>');
+                    //若是第一页,给上一页添加禁用样式,并且清除点击事件
+                    if (currentPage == 1) {
+                        //添加禁用样式
+                        $('#left').addClass('disabled');
+                        //清除点击事件
+                        $('#left>span').removeAttr('onclick');
+                    }
+                    if (currentPage == totalPage) {
+                        //添加禁用样式
+                        $('#right').addClass('disabled');
+                        //清除点击事件
+                        $('#right>span').removeAttr('onclick');
+                    }
+                    //添加当前页的激活样式
+                    $('#page>li').eq(currentPage - begin + 1).addClass('active');
+                    //显示总页数
+                    $('#totalPage').html(totalPage);
+                } else if (data.status == 1) {
+                    $('#page').empty();
+                    $('#totalPage').html('');
+                    layer.msg(data.message);
+                } else {
+                    layer.msg('网络异常');
+                }
+            }
+        );
+    }
+
+    $('#search_btn').click(function () {
+        findByPage(1);
+        // findByPage(page);
+    })
+</script>
+</body>
+</html>

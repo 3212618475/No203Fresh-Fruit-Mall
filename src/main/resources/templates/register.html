@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <title>天天生鲜－注册</title>
+    <link rel="stylesheet" type="text/css" href="css/reset.css">
+    <link rel="stylesheet" type="text/css" href="css/main.css">
+    <script type="text/javascript" src="js/jquery-1.12.4.min.js"></script>
+    <script type="text/javascript" src="layer/layer.js"></script>
+</head>
+<body>
+
+
+<div class="register_con">
+    <div class="l_con fl">
+        <a th:href="@{toIndex}" class="reg_logo"><img src="images/logo.png"></a>
+        <div class="reg_slogan">足不出户 · 新鲜每一天</div>
+        <div class="reg_banner"></div>
+    </div>
+
+    <div class="r_con fr">
+        <div class="reg_title clearfix">
+            <h1>用户注册</h1>
+            <a th:href="@{toUserLogin}">登录</a>
+        </div>
+        <div class="reg_form clearfix">
+            <form id="reg_form">
+                <input type="hidden" name="" value="e">
+                <ul>
+                    <li>
+                        <label>用户名:</label>
+                        <input type="text" name="user_name" id="user_name">
+                        <span class="error_tip">提示信息</span>
+                    </li>
+                    <li>
+                        <label>密码:</label>
+                        <input type="password" name="pwd" id="pwd">
+                        <span class="error_tip">提示信息</span>
+                    </li>
+                    <li>
+                        <label>确认密码:</label>
+                        <input type="password" name="cpwd" id="cpwd">
+                        <span class="error_tip">提示信息</span>
+                    </li>
+                    <li>
+                        <label>邮箱:</label>
+                        <input type="text" name="email" id="email">
+                        <span class="error_tip">提示信息</span>
+                    </li>
+
+                    <li class="agreement">
+                        <input type="checkbox" name="allow" id="allow" checked="checked">
+                        <label for="allow">同意”天天生鲜用户使用协议“</label>
+                        <span class="error_tip2">提示信息</span>
+                    </li>
+                    <li class="reg_sub">
+                        <input type="button" value="注 册" onclick="reg()">
+                    </li>
+                </ul>
+            </form>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    var username;
+    var password;
+    var email;
+    var flag1;
+    var flag2;
+    var flag3;
+    var flag4;
+    $('#user_name').blur(function () {
+        username = $("#user_name").val();
+        var reg_username = /^\w{6,10}$/;
+        flag1 = reg_username.test(username);
+        if (flag1) {
+            layer.tips('用户名合法', '#user_name');
+            $("#user_name").css("border", "");
+        } else {
+            layer.tips('用户名需满足6到10位', '#user_name');
+            $("#user_name").css("border", "1px solid red");
+        }
+    });
+    $('#pwd').blur(function () {
+        password = $('#pwd').val();
+        var reg_password = /^\w{6,10}$/;
+        flag2 = reg_password.test(password);
+        if (flag2) {
+            layer.tips('密码合法', '#pwd');
+            $("#pwd").css("border", "");
+        } else {
+            layer.tips('密码需满足6到10位', '#pwd');
+            $("#pwd").css("border", "1px solid red");
+        }
+    });
+    $('#cpwd').blur(function () {
+        var repassword = $('#cpwd').val();
+        flag3 = (password == repassword && repassword != "");
+        if (password == repassword && repassword != "") {
+            layer.tips('两次密码一致', '#cpwd');
+            $("#cpwd").css("border", "");
+        } else {
+            layer.tips('两次密码不一致', '#cpwd');
+            $("#cpwd").css("border", "1px solid red");
+        }
+    });
+    $('#email').blur(function () {
+        email = $('#email').val();
+        var reg_email = /^[0-9a-zA-Z_.-]+[@][0-9a-zA-Z_.-]+[.][a-zA-Z]{2,3}$/;
+        flag4 = reg_email.test(email);
+        if (flag4) {
+            layer.tips('邮箱格式正确', '#email');
+            $("#email").css("border", "");
+        } else {
+            layer.tips('邮箱格式不正确', '#email');
+            $("#email").css("border", "1px solid red");
+        }
+    });
+
+    function reg() {
+        var allow = $('#allow')[0];
+        if (!allow.checked) {
+            layer.msg('需同意协议');
+        } else {
+            if (flag1 && flag2 && flag3 && flag4 && allow.checked) {
+                // window.location.href = "register.do?username="+username+"&password="+password+"&email="+email;
+                $.post(
+                    "userRegister",
+                    {"username": username, "password": password, "email": email},
+                    function (data) {
+                        if (data.status == 0) {
+                            window.location.href = "toIndex";
+                        } else if (data.status == 1) {
+                            layer.msg(data.message);
+                        }
+                    }
+                );
+            } else {
+                layer.msg('请将信息填写完整');
+            }
+        }
+    }
+</script>
+</body>
+</html>

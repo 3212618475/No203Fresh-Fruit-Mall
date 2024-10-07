@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <title>天天生鲜－商品详情</title>
+    <link rel="stylesheet" type="text/css" href="css/reset.css">
+    <link rel="stylesheet" type="text/css" href="css/main.css">
+    <script type="text/javascript" src="js/jquery-1.12.4.min.js"></script>
+    <script type="text/javascript" src="layer/layer.js"></script>
+    <style>
+        .tab_content dl dd ul {
+            margin: 0px;
+            padding: 20px 0px 0px;
+            list-style: none;
+            overflow: hidden;
+            color: #666666;
+            font-family: tahoma, arial, & #39, Microsoft YaHei & #39, & #39, Hiragino Sans GB & #39, u5b8bu4f53, sans-serif;
+        }
+
+        .tab_content dl dd ul li {
+            margin: 0px 0px 5px;
+            padding: 0px 0px 0px 42px;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            width: 200px;
+            float: left;
+        }
+    </style>
+</head>
+<body>
+<input type="hidden" th:value="${session.username}" id="username"/>
+<script type="text/javascript">
+    $(function () {
+        var username = $('#username').val();
+        if (username == '' || username == null) {
+            $("#login_info").css('display', 'none');
+            $("#login_btn").css('display', 'block');
+        } else {
+            $("#login_info").css('display', 'block');
+            $("#login_btn").css('display', 'none');
+        }
+    });
+</script>
+<div class="header_con">
+    <div class="header">
+        <div class="welcome fl">欢迎来到天天生鲜!</div>
+        <div class="login_btn fl"></div>
+        <div class="fr">
+            <div class="login_info fl" id="login_info">
+                欢迎您：<em>"<span th:text="${session.username}"></span>"</em>
+                <a th:href="@{userQuit}" class="zhuxiao">注销</a>
+            </div>
+            <div class="login_btn fl" id="login_btn">
+                <a th:href="@{toUserLogin}">登录</a>
+                <span>|</span>
+                <a th:href="@{toUserRegister}">注册</a>
+            </div>
+
+            <div class="user_link fl">
+                <span>|</span>
+                <a href="javascript:;" onclick="customer()">用户中心</a>
+                <span>|</span>
+                <a href="javascript:;" onclick="shop()">我的购物车</a>
+                <span>|</span>
+                <a href="javascript:;" onclick="order()">我的订单</a>
+                <script type="text/javascript">
+                    var username = $('#username').val();
+                    function customer() {
+                        if (username == '' || username == null) {
+                            layer.alert('请先登录', {
+                                icon: 5,
+                                skin: 'layer-ext-moon'
+                            });
+                        } else {
+                            window.location.href = "toCustomer";
+                        }
+                    }
+
+                    function shop() {
+                        if (username == '' || username == null) {
+                            layer.alert('请先登录', {
+                                icon: 5,
+                                skin: 'layer-ext-moon'
+                            });
+                        } else {
+                            window.location.href = "toShop";
+                        }
+                    }
+
+                    function order() {
+                        if (username == '' || username == null) {
+                            layer.alert('请先登录', {
+                                icon: 5,
+                                skin: 'layer-ext-moon'
+                            });
+                        } else {
+                            window.location.href = "toOrder";
+                        }
+                    }
+                </script>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="search_bar clearfix">
+    <a th:href="@{toIndex}" class="logo fl"><img src="images/logo.png"></a>
+    <div class="search_con fl">
+        <form method="post" th:action="@{goodsSearch}">
+            <input type="text" class="input_text fl" name="search" placeholder="搜索商品">
+            <input type="submit" class="input_btn fr" value="搜索">
+        </form>
+    </div>
+    <div class="guest_cart fr">
+        <a href="javascript:;" onclick="shop2()" class="cart_name fl">我的购物车</a>
+        <script type="text/javascript">
+            var username = $('#username').val();
+            function shop2() {
+                shop();
+            }
+        </script>
+        <div class="goods_count fl" id="show_count" th:text="${session.count}"></div>
+    </div>
+</div>
+
+<div class="navbar_con">
+    <div class="navbar clearfix">
+        <div class="subnav_con fl">
+            <h1>全部商品分类</h1>
+            <span></span>
+            <ul class="subnav">
+                <li>
+                    <input type="hidden" value="新鲜水果"/>
+                    <a href="javascript:;" onclick="more(this)" class="fruit">新鲜水果</a>
+                </li>
+                <li>
+                    <input type="hidden" value="海鲜水产"/>
+                    <a href="javascript:;" onclick="more(this)" class="seafood">海鲜水产</a>
+                </li>
+                <li>
+                    <input type="hidden" value="猪牛羊肉"/>
+                    <a href="javascript:;" onclick="more(this)" class="meet">猪牛羊肉</a>
+                </li>
+                <li>
+                    <input type="hidden" value="禽类蛋品"/>
+                    <a href="javascript:;" onclick="more(this)" class="egg">禽类蛋品</a>
+                </li>
+                <li>
+                    <input type="hidden" value="新鲜蔬菜"/>
+                    <a href="javascript:;" onclick="more(this)" class="vegetables">新鲜蔬菜</a>
+                </li>
+                <li>
+                    <input type="hidden" value="速冻食品"/>
+                    <a href="javascript:;" onclick="more(this)" class="ice">速冻食品</a>
+                </li>
+            </ul>
+        </div>
+        <ul class="navlist fl">
+            <li><a th:href="@{toIndex}">首页</a></li>
+            <li class="interval">|</li>
+            <li><a href="#">手机生鲜</a></li>
+            <li class="interval">|</li>
+            <li><a href="#">抽奖</a></li>
+        </ul>
+    </div>
+</div>
+
+<div class="breadcrumb">
+    <a th:href="@{readMoreByMessage(groupid=${goods.groupid})}">全部分类</a>
+    <span>&gt;</span>
+    <a href="#" th:text="${goods.groupid}"></a>
+    <span>&gt;</span>
+    <span>商品详情</span>
+</div>
+
+<div class="goods_detail_con clearfix">
+    <input type="hidden" id="goods" th:value="${goods.photo}"/>
+    <div class="goods_detail_pic fl"><img id="goodsImg" src=""></div>
+    <script type="text/javascript">
+        var goods_photo = $('#goods').val();
+        // $('#goodsImg').attr('src', 'http://127.0.0.1:8080/' + goods_photo);
+        $('#goodsImg').attr('src', goods_photo);
+    </script>
+    <div class="goods_detail_list fr">
+        <h3 th:text="${goods.msg}"></h3>
+        <p th:text="${goods.msg}"></p>
+        <div class="prize_bar">
+            <span class="show_pirze">¥<em id="danjia" th:text="${goods.price}"></em></span>
+            <span class="show_unit">单  位：<span th:text="${goods.gross}"></span></span>
+        </div>
+        <div class="goods_num clearfix">
+            <div class="num_name fl">数 量：</div>
+            <div class="num_add fl">
+                <input type="text" class="num_show fl" id="shuliang" value="1">
+                <input type="hidden" id="count" th:value="${goods.count}"/>
+                <a href="javascript:;" class="add fr" id="jiahao">+</a>
+                <a href="javascript:;" class="minus fr" id="jianhao">-</a>
+            </div>
+        </div>
+        <div class="total">总价：<em id="zongjia" th:text="${goods.price}"></em>元</div>
+        <input type="hidden" id="goodsid" th:value="${goods.id}"/>
+        <div class="operate_btn">
+            <a href="javascript:;" onclick="goodsBuy()" class="buy_btn" id="buy_btn">立即购买</a>
+            <a href="javascript:;" onclick="goodsCar()" class="add_cart" id="add_cart">加入购物车</a>
+        </div>
+    </div>
+</div>
+
+<div class="main_wrap clearfix">
+    <div class="l_wrap fl clearfix">
+        <div class="new_goods">
+            <h3>新品推荐</h3>
+            <ul id="goodsNewImg">
+                <li th:each="goodsNew:${goodsNews}">
+                    <input type="hidden" th:value="${goodsNew.id}"/>
+                    <a href="javascript:;" onclick="goodsNew(this)"><img th:src="${goodsNew.photo}"></a>
+                    <h4><input type="hidden" th:value="${goodsNew.id}"/><a href="javascript:;" onclick="goodsNew(this)"
+                                                                           th:text="${goodsNew.msg}"></a></h4>
+                    <div class="prize">￥<span th:text="${goodsNew.price}"></span></div>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="r_wrap fr clearfix">
+        <ul class="detail_tab clearfix">
+            <li class="active">商品介绍</li>
+<!--            <li>评论</li>-->
+        </ul>
+        <div class="tab_content">
+            <dl>
+                <dt>商品详情：</dt>
+                <dd>
+                    <ul id="parameter-brand" class="p-parameter-list">
+                        <li th:title="${goods.brand}">品牌：&nbsp;<span style="color: #5e69ad;" th:text="${goods.brand}"></span></li>
+                    </ul>
+                    <ul class="parameter2 p-parameter-list">
+                        <li th:title="${goods.name}">商品名称：<span th:text="${goods.name}"></span></li>
+                        <li th:title="${goods.no}">商品编号：<span th:text="${goods.no}"></span></li>
+                        <li th:title="${goods.gross}">商品毛重：<span th:text="${goods.gross}"></span></li>
+                        <li th:title="${goods.address}">商品产地：<span th:text="${goods.address}"></span></li>
+                        <li th:title="${goods.weight}">重量：<span th:text="${goods.weight}"></span></li>
+                        <li th:title="${goods.place}">进口：<span th:text="${goods.place}"></span></li>
+                        <li th:title="${goods.groupid}">分类：<span th:text="${goods.groupid}"></span></li>
+                        <li th:title="${goods.pack}">包装：<span th:text="${goods.pack}"></span></li>
+                        <li th:title="${goods.address}">原产地：<span th:text="${goods.address}"></span></li>
+                    </ul>
+                </dd>
+            </dl>
+        </div>
+    </div>
+</div>
+<div class="footer login_footer">
+</div>
+<div class="add_jump"></div>
+<script type="text/javascript" src="js/shop_message.js"></script>
+</body>
+<script type="text/javascript">
+    function goodsCar() {
+        var goodsid = $('#goodsid').val();
+        var shuliang = $('#shuliang').val();
+        var username = $('#username').val();
+        var count = $('#count').val();
+        if (username == '' || username == null) {
+            layer.alert('请先登录', {
+                icon: 5,
+                skin: 'layer-ext-moon'
+            });
+        }else {
+            if (count<=0){
+                layer.alert('库存不足', {
+                    icon: 5,
+                    skin: 'layer-ext-moon'
+                });
+            }else {
+                layer.confirm('是否加入购物车?', {btn: ['添加', '取消']}, function (){
+                    $.post(
+                        "addGoodsCar",
+                        {"goodsid": goodsid, "shuliang": shuliang},
+                        function (data) {
+                            if (data.status == 0) {
+                                window.location.reload();
+                            } else if (data.status == 1) {
+                                layer.msg(data.message);
+                            } else {
+                                layer.msg('网络异常');
+                            }
+                        }
+                    );
+                })
+            }
+        }
+    }
+
+    function goodsBuy() {
+        var goodsid = $('#goodsid').val();
+        var shuliang = $('#shuliang').val();
+        var username = $('#username').val();
+        var count = $('#count').val();
+        if (username == '' || username == null) {
+            layer.alert('请先登录', {
+                icon: 5,
+                skin: 'layer-ext-moon'
+            });
+        }else {
+            if (count<=0){
+                layer.alert('库存不足', {
+                    icon: 5,
+                    skin: 'layer-ext-moon'
+                });
+            }else {
+                layer.confirm('是否立即购买?', {btn: ['确定', '取消']}, function (){
+                    $.post(
+                        "buyGoodsImmediately",
+                        {"goodsid": goodsid, "shuliang": shuliang},
+                        function (data) {
+                            if (data.status == 0) {
+                                var ids = data.result;
+                                window.location.href = "toAddress?ids="+ids;
+                            } else if (data.status == 1) {
+                                layer.msg(data.message);
+                            } else {
+                                layer.msg('网络异常');
+                            }
+                        }
+                    );
+                })
+            }
+        }
+    }
+
+    function goodsNew(btn) {
+        var $ids = $(btn).siblings();
+        var id = $($ids[0]).val();
+        window.location.href = "shopMessage?id=" + id;
+    }
+
+    function more(btn) {
+        var $groupid = $(btn);
+        var groupid = $($groupid[0]).prev().val();
+        $.get(
+            "readMore",
+            {"groupid":groupid},
+            function (data) {
+                if (data.status == 0){
+                    window.location.href = "readMoreSecond?groupid=" + groupid;
+                }else if (data.status == 1){
+                    layer.msg(data.message);
+                }else {
+                    layer.msg('网络异常');
+                }
+            }
+        );
+    }
+
+    function fruitMore() {
+        var groupid = '新鲜水果';
+        window.location.href = "readMore?groupid=" + groupid;
+    }
+
+    function seafoodMore() {
+        var groupid = '海鲜水产';
+        window.location.href = "readMore?groupid=" + groupid;
+    }
+
+    function meatMore() {
+        var groupid = '猪牛羊肉';
+        window.location.href = "readMore?groupid=" + groupid;
+    }
+
+    function eggsMore() {
+        var groupid = '禽类蛋品';
+        window.location.href = "readMore?groupid=" + groupid;
+    }
+
+    function vegetablesMore() {
+        var groupid = '新鲜蔬菜';
+        window.location.href = "readMore?groupid=" + groupid;
+    }
+
+    function freezeMore() {
+        var groupid = '速冻食品';
+        window.location.href = "readMore?groupid=" + groupid;
+    }
+</script>
+</html>
+
